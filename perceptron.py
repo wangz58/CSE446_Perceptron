@@ -13,8 +13,10 @@ def dot_kf(u, v):
     Returns:
         dot(u,v) + 1
     """
-    # TODO
-    return 0
+    res = 0
+    for i in range(0, len(u)):
+        res += float(u[i]) * float(v[i])
+    return res + 1
 
 def poly_kernel(d):
     """
@@ -28,8 +30,7 @@ def poly_kernel(d):
         and returns (u*v+1)^d.
     """
     def kf(u, v):
-        # TODO: implement the kernel function
-        return 0
+        return (dot_kf(u, v))**d
     return kf
 
 def exp_kernel(s):
@@ -44,8 +45,10 @@ def exp_kernel(s):
         and returns exp(-||u-v||/(2*s^2))
     """
     def kf(u, v):
-        # TODO: implement the kernel function
-        return 0
+        sum = 0
+        for i in range(len(u)):
+            sum += abs(u[i] - v[i])
+        return math.exp(-sum / (2*s**2))
     return kf
 
 class Perceptron(object):
@@ -58,6 +61,8 @@ class Perceptron(object):
         """
         self.kf = kf
         # TODO: add more fields as needed
+        self.mistake_points = [];
+        self.mistake_labels = [];
 
     def update(self, point, label):
         """
@@ -71,15 +76,24 @@ class Perceptron(object):
             True if there is an update (prediction is wrong),
             False otherwise (prediction is accurate).
         """
-        # TODO
-        return False
+        if self.predict(point) == label:
+            return True
+        else:
+            self.mistake_points.append(point)
+            self.mistake_labels.append(label)
+            return False
 
     def predict(self, point):
         """
         Given a point, predicts the label of that point (1 or -1).
         """
-        # TODO
-        return 1
+        total = 0
+        for i in range(0, len(self.mistake_points)):
+            total += self.mistake_labels[i] * self.kf(self.mistake_points[i], point)
+        if total > 0:
+            return 1
+        else:
+            return -1
 
 # Feel free to add any helper functions as needed.
 
@@ -88,3 +102,13 @@ if __name__ == '__main__':
     val_data, val_labs = data.load_data('data/validation.csv')
     test_data, test_labs = data.load_data('data/test.csv')
     # TODO: implement code for running the problems
+    x = Perceptron(dot_kf)
+    d = [1,3,5,7,10,15,20]
+    z = Perceptron(exp_kernel(10))
+    # for j in d:
+    y = Perceptron(poly_kernel(5))
+    for i in range(0, len(test_data)):
+        y.update(test_data[i], test_labs[i])
+        if (i > 0) and (i % 100 == 0):
+            loss = float(len(y.mistake_points)) / i
+            print i, ": ", loss
