@@ -109,6 +109,10 @@ if __name__ == '__main__':
     y = Perceptron(poly_kernel(5))
     for i in range(0, len(test_data)):
         y.update(test_data[i], test_labs[i])
+        z.update(test_data[i], test_labs[i])
         if (i > 0) and (i % 100 == 0):
-            loss = float(len(y.mistake_points)) / i
-            print i, ": ", loss
+            lossY = float(len(y.mistake_points)) / i
+            lossZ = float(len(z.mistake_points)) / i
+            # print z, ": ", z.mistake_points
+            print i, ": ", lossY
+            print i, ": ", lossZ
