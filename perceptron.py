@@ -47,8 +47,8 @@ def exp_kernel(s):
     def kf(u, v):
         sum = 0
         for i in range(len(u)):
-            sum += abs(u[i] - v[i])
-        return math.exp(-sum / (2*s**2))
+            sum += (u[i] - v[i])**2
+        return math.exp(-math.sqrt(sum) / (2*(s**2)))
     return kf
 
 class Perceptron(object):
@@ -113,6 +113,8 @@ if __name__ == '__main__':
         if (i > 0) and (i % 100 == 0):
             lossY = float(len(y.mistake_points)) / i
             lossZ = float(len(z.mistake_points)) / i
-            # print z, ": ", z.mistake_points
             print i, ": ", lossY
             print i, ": ", lossZ
+    print i, ": ", float(len(y.mistake_points)) / 1000
+    print i, ": ", float(len(z.mistake_points)) / 1000
+
